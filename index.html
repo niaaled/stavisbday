@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surprise!</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400&display=swap" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body, html { 
+  height: 100%; width: 100%; 
+  font-family: 'Orbitron', sans-serif; 
+  display:flex; justify-content:center; align-items:center; 
+  background:#111; color:#fff; 
+  overflow-x:hidden; 
+}
+.container { 
+  text-align:center; cursor:pointer; 
+  width:100%; height:100%; 
+  display:flex; justify-content:center; align-items:center; flex-direction:column; 
+}
+
+/* Pop-in animation for steps */
+.pop-in {
+  transform: translateZ(-500px);
+  opacity: 0;
+  animation: popIn 1s forwards;
+  font-size: 2.5em;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+@keyframes popIn {
+  0% { transform: translateZ(-500px); opacity: 0; }
+  100% { transform: translateZ(0); opacity: 1; }
+}
+
+/* Celebration text with bounce */
+.celebration {
+  font-size: 2.2em;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  animation: bounce 1.5s infinite;
+  position: relative;
+  z-index: 2;
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* Sparkling lights around celebration */
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0;
+  animation: sparkle 2s infinite;
+}
+@keyframes sparkle {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.5); opacity: 1; }
+  100% { transform: scale(0.5); opacity: 0; }
+}
+
+/* Random sparkle positions */
+.sparkle:nth-child(1) { top: -10px; left: -30px; animation-delay: 0s; }
+.sparkle:nth-child(2) { top: -20px; right: -25px; animation-delay: 0.3s; }
+.sparkle:nth-child(3) { bottom: -10px; left: -40px; animation-delay: 0.6s; }
+.sparkle:nth-child(4) { bottom: -20px; right: -35px; animation-delay: 0.9s; }
+
+/* Love text */
+.love-text { margin-top: 20px; font-size: 1.2em; color: #ffffff; font-weight: bold; }
+
+/* Gallery in strict row */
+.gallery-row {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+  flex-wrap: nowrap; /* force row */
+}
+.gallery-item {
+  position: relative;
+  cursor: pointer;
+  flex: 1;
+  max-width: 30%;
+}
+.gallery-item img {
+  width: 100%;
+  border-radius: 10px;
+  transition: 0.3s ease;
+  display:block;
+}
+.gallery-item .overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.75em;   /* smaller text */
+  line-height: 1.2em;  /* tighter line spacing so it fits */
+  opacity: 0;
+  border-radius: 10px;
+  transition: 0.3s ease;
+  padding: 8px;        /* padding so it doesn't touch edges */
+  word-wrap: break-word;
+}
+.gallery-item.active img { filter: brightness(50%); }
+.gallery-item.active .overlay { opacity: 1; }
+
+/* Responsive */
+@media(max-width: 768px) {
+  .pop-in { font-size: 1.8em; }
+  .celebration { font-size: 1.6em; }
+  .gallery-item { max-width: 30%; }
+  .overlay { font-size: 0.9em; }
+}
+@media(max-width: 480px) {
+  .pop-in { font-size: 1.5em; }
+  .celebration { font-size: 1.5em; }
+  .gallery-item { max-width: 30%; }
+  .overlay { font-size: 0.65em; 
+    padding: 6px; }
+}
+</style>
+</head>
+<body>
+<div class="container" id="container">
+  <div id="content" class="pop-in">Are you ready for your last surprise?</div>
+</div>
+
+<script>
+const contentSteps = [
+  { type:'text', data:"Are you ready for your last surprise?" },
+  { type:'text', data:"Yeeeeaaaahh?" },
+  { type:'text', data:"Here's a little hint" },
+  { type:'image', data:"pngegg.png" }, 
+  { type:'text', data:"Yeaaaaaahhhh??" },
+  { type:'gallery', data:[
+      { img:"IMG_0234.jpg", info:"We'll be joining your favorite band's worldtour at the Rock In Rio -festival in June 2026." },
+      { img:"IMG_0235.jpg", info:"We'll also be exploring romantic Lisbon together." },
+      { img:"IMG_0232.jpg", info:"And of course staying in a beautiful hotel room with lots of mirrors so we can get really freaky deaky." }
+    ], celebration:"We're going to see Linkin Park in Portugal!" }
+];
+
+let currentStep = 0;
+const container = document.getElementById('container');
+
+function showStep(step){
+  container.innerHTML = ''; 
+  const c = contentSteps[step];
+
+  if(c.type === 'text'){
+    const div = document.createElement('div');
+    div.className = 'pop-in';
+    div.textContent = c.data;
+    container.appendChild(div);
+  }
+  else if(c.type === 'image'){
+    const img = document.createElement('img');
+    img.src = c.data;
+    img.className = 'pop-in';
+    container.appendChild(img);
+  }
+  else if(c.type === 'gallery'){
+    // Celebration text wrapper
+    const celebWrapper = document.createElement('div');
+    celebWrapper.style.position = "relative";
+    celebWrapper.style.display = "inline-block";
+
+    const celeb = document.createElement('div');
+    celeb.className = 'celebration';
+    celeb.textContent = c.celebration;
+    celebWrapper.appendChild(celeb);
+
+    // Sparkles
+    for(let i=0;i<4;i++){
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      celebWrapper.appendChild(sparkle);
+    }
+
+    container.appendChild(celebWrapper);
+
+    // Gallery row
+    const galleryRow = document.createElement('div');
+    galleryRow.className = 'gallery-row';
+
+    let activeItem = null;
+
+    c.data.forEach((item)=>{
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'gallery-item';
+
+      const img = document.createElement('img');
+      img.src = item.img;
+      itemDiv.appendChild(img);
+
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay';
+      overlay.textContent = item.info;
+      itemDiv.appendChild(overlay);
+
+      itemDiv.addEventListener('click', ()=>{
+        if(activeItem && activeItem !== itemDiv){
+          activeItem.classList.remove('active');
+        }
+        const isActive = itemDiv.classList.contains('active');
+        itemDiv.classList.toggle('active', !isActive);
+        activeItem = itemDiv.classList.contains('active') ? itemDiv : null;
+      });
+
+      galleryRow.appendChild(itemDiv);
+    });
+
+    container.appendChild(galleryRow);
+
+    const love = document.createElement('div');
+    love.className = 'love-text';
+    love.textContent = "I love you ❤️";
+    container.appendChild(love);
+  }
+}
+
+// Initial display
+showStep(currentStep);
+
+// Click to advance
+container.addEventListener('click', ()=>{
+  if(currentStep < contentSteps.length -1){
+    currentStep++;
+    showStep(currentStep);
+  }
+});
+</script>
+</body>
+</html>
