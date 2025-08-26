@@ -32,6 +32,11 @@ body, html {
   text-transform: uppercase;
   letter-spacing: 3px;
 }
+
+img.pop-in {
+  max-width: 200px;   /* shrink the image width */
+  height: auto;       /* keep aspect ratio */
+}
 @keyframes popIn {
   0% { transform: translateZ(-500px); opacity: 0; }
   100% { transform: translateZ(0); opacity: 1; }
